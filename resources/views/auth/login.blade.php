@@ -22,6 +22,13 @@
       @enderror
     </div>
 
+    <div>
+      <label class="flex items-center text-sm text-gray-700">
+        <input type="checkbox" name="remember" value="1" class="mr-2" {{ old('remember') ? 'checked' : '' }}>
+        Se souvenir de moi
+      </label>
+    </div>
+
     <button type="submit" class="rounded-md bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700">Se connecter</button>
 
     <p class="text-sm text-gray-600">

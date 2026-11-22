@@ -14,6 +14,8 @@
       @auth
       <span class="text-sm text-gray-600">{{ auth()->user()->name }}</span>
 
+      <x-nav-link to="my-posts">Mes articles</x-nav-link>
+
       <form method="POST" action="{{ route('logout') }}">
         @csrf
 
