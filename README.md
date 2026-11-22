@@ -12,6 +12,14 @@ Mini-CMS évoluera au fil du semestre vers une petite plateforme de publication 
 - Vues Blade : `heure` et `a-propos`.
 - Base de données SQLite locale (`database/database.sqlite`, non versionnée).
 
+## Routes disponibles
+
+| Méthode | URI | Réponse |
+|---|---|---|
+| GET | `/` | Vue `welcome` (page d'accueil par défaut de Laravel) |
+| GET | `/heure` | Vue `heure` avec l'heure (format `H:i`) et la date (format `d/m/Y`) |
+| GET | `/a-propos` | Vue `a-propos` avec le nom de l'auteur et le groupe |
+
 ## Prérequis
 
 - PHP et Composer (PHP 8.3 ou plus depuis https://www.php.net/downloads, avec les extensions curl, fileinfo, mbstring, openssl, pdo_sqlite, sqlite3 et zip activées dans php.ini, et Composer depuis https://getcomposer.org).
