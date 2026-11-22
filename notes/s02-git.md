@@ -21,3 +21,11 @@ Réponse : `vendor/` contient toutes les dépendances PHP installées par Compos
 ## 5. Git Credential Manager
 
 Réponse : Git Credential Manager range le jeton GitHub dans le Gestionnaire d'identification Windows, sous l'entrée `git:https://github.com`. Sur un poste de l'université, il faut supprimer cette entrée en fin de séance : la personne suivante utilisant la même session Windows pourrait sinon pousser en mon nom. Sur un ordinateur personnel, on peut la conserver pour ne pas avoir à se reconnecter.
+
+## 6. Historique depuis lab-01
+
+Nombre de commits depuis lab-01 : 5 avant ce dernier commit (Ajouter les notes Git de la session 02, Ajouter la page a-propos, Ajouter les captures d'écran de la session 02, Ajouter le README du projet, Documenter les routes dans le README).
+
+Fichiers modifiés depuis lab-01 : `notes/s02-git.md`, `routes/web.php`, `resources/views/a-propos.blade.php`, les quatre fichiers de `screenshots/` et `README.md` (modifié une deuxième fois par la partie 1 du défi).
+
+Ce que `git tag -n` affiche pour lab-01 : `lab-01` suivi du message du commit qu'il désigne, soit `Initialiser le projet Mini-CMS`.
