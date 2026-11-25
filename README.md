@@ -4,107 +4,116 @@ Projet fil rouge de l'Atelier Framework Côté Serveur (Laravel 13, PHP 8.3+), 3
 
 Auteur : Bayrem, groupe MDW32.
 
-Mini-CMS évoluera au fil du semestre vers une petite plateforme de publication : pages publiques, back-office authentifié, API JSON et tests Pest. Chaque session se termine par un tag Git (`lab-01`, `lab-01b`, puis un tag par session).
+## Description
 
-## État actuel (tag lab-08)
+Mini-CMS est une petite plateforme de publication écrite en Laravel 13 : pages publiques, back-office authentifié et API JSON. Le projet est corrigé depuis un clone propre, sur SQLite, en suivant uniquement ce README. Le dépôt est `https://github.com/bayrem-db/mini-cms.git` ; la version livrée est le tag `lab-08b`.
 
-- `GET /api/categories` et `GET /api/categories/{category}`, avec le nombre d'articles publiés de chaque catégorie.
-- `GET /api/posts?category=<slug>&tag=<slug>` : filtres par catégorie et par tag, comparaison exacte, slug inconnu refusé (422).
-- `POST /api/login` renvoie un jeton Sanctum ; `POST /api/logout` le révoque.
-- `POST`, `PUT/PATCH` et `DELETE /api/posts` protégés par `auth:sanctum`, avec les mêmes Form Requests et la même `PostPolicy` que le site (401, 403 et 422 en JSON).
-- Tests Pest `ApiReadTest` (5) et `ApiWriteTest` (8) : 94 tests verts au total.
-- Défi session 14 conservé : collection Postman `docs/postman/mini-cms.postman_collection.json` (variables `base_url` et `token`, aucun jeton exporté) et `notes/s14-defi.md`.
-- Défi session 13 conservé : `tags` dans les réponses et `body` uniquement sur la page d'un article.
-- Fonctionnalités des sessions précédentes conservées : authentification manuelle, Gates et `PostPolicy`, middleware `admin`, défis `/mes-articles` et `/admin/utilisateurs`.
+## Fonctionnalités
 
-## Données de démonstration
-
-Après un clone, reconstruire la base avec `php artisan migrate:fresh --seed`. Attention : cette commande vide la base avant de la remplir.
-
-## Routes disponibles
-
-| Méthode | URI | Nom | Action |
-|---|---|---|---|
-| GET | `/` | `home` | `PageController@home` |
-| GET | `/a-propos` | `about` | `PageController@about` |
-| GET | `/heure` | `time` | `PageController@time` |
-| GET | `/posts` | `posts.index` | `PostController@index` |
-| GET | `/posts/archive/{year}` | `posts.archive` | `PostController@archive` |
-| GET | `/posts/categorie/{category:slug}` | `posts.category` | `PostController@byCategory` |
-| GET | `/posts/tag/{tag:slug}` | `posts.tag` | `PostController@byTag` |
-| GET | `/posts/create` | `posts.create` | `PostController@create` |
-| POST | `/posts` | `posts.store` | `PostController@store` |
-| GET | `/posts/{post}` | `posts.show` | `PostController@show` |
-| GET | `/posts/{post}/edit` | `posts.edit` | `PostController@edit` |
-| PUT | `/posts/{post}` | `posts.update` | `PostController@update` |
-| DELETE | `/posts/{post}` | `posts.destroy` | `PostController@destroy` |
-| PATCH | `/posts/{post}/publication` | `posts.publication` | `PostController@togglePublication` |
-| GET | `/admin/categories` | `admin.categories.index` | `CategoryController@index` |
-| GET | `/admin/categories/create` | `admin.categories.create` | `CategoryController@create` |
-| POST | `/admin/categories` | `admin.categories.store` | `CategoryController@store` |
-| GET | `/admin/categories/{category}/edit` | `admin.categories.edit` | `CategoryController@edit` |
-| PUT | `/admin/categories/{category}` | `admin.categories.update` | `CategoryController@update` |
-| DELETE | `/admin/categories/{category}` | `admin.categories.destroy` | `CategoryController@destroy` |
-| GET | `/admin/tags` | `admin.tags.index` | `TagController@index` |
-| GET | `/admin/tags/create` | `admin.tags.create` | `TagController@create` |
-| POST | `/admin/tags` | `admin.tags.store` | `TagController@store` |
-| GET | `/admin/tags/{tag}/edit` | `admin.tags.edit` | `TagController@edit` |
-| PUT | `/admin/tags/{tag}` | `admin.tags.update` | `TagController@update` |
-| DELETE | `/admin/tags/{tag}` | `admin.tags.destroy` | `TagController@destroy` |
-| GET | `/inscription` | `register` | `Auth\RegisterController@create` |
-| POST | `/inscription` | `register.store` | `Auth\RegisterController@store` |
-| GET | `/connexion` | `login` | `Auth\LoginController@create` |
-| POST | `/connexion` | `login.store` | `Auth\LoginController@store` |
-| POST | `/deconnexion` | `logout` | `Auth\LoginController@destroy` |
-| GET | `/mes-articles` | `my-posts` | `PostController@myPosts` |
-| GET | `/admin/utilisateurs` | `admin.users.index` | `UserController@index` |
-| PATCH | `/admin/utilisateurs/{user}/role` | `admin.users.role` | `UserController@updateRole` |
-| GET | `/api/posts` | `api.posts.index` | `Api\PostController@index` |
-| GET | `/api/posts/{post}` | `api.posts.show` | `Api\PostController@show` |
-| GET | `/api/categories` | `api.categories.index` | `Api\CategoryController@index` |
-| GET | `/api/categories/{category}` | `api.categories.show` | `Api\CategoryController@show` |
-| POST | `/api/login` | `api.login` | `Api\AuthController@login` |
-| POST | `/api/logout` | `api.logout` | `Api\AuthController@logout` |
-| POST | `/api/posts` | `api.posts.store` | `Api\PostController@store` |
-| PUT/PATCH | `/api/posts/{post}` | `api.posts.update` | `Api\PostController@update` |
-| DELETE | `/api/posts/{post}` | `api.posts.destroy` | `Api\PostController@destroy` |
-
-## Prérequis
-
-- PHP et Composer (PHP 8.3 ou plus depuis https://www.php.net/downloads, avec les extensions curl, fileinfo, mbstring, openssl, pdo_sqlite, sqlite3 et zip activées dans php.ini, et Composer depuis https://getcomposer.org).
-- Laravel Installer, Node.js LTS et npm, Git.
+- Site public : accueil, `/a-propos` (Bayrem, MDW32), `/heure`, liste et détail des articles, archives par année, pages par catégorie et par tag.
+- Back-office : création, modification, suppression et publication des articles ; gestion des catégories et des tags ; validation en français.
+- Authentification manuelle : `/inscription`, `/connexion`, `/deconnexion`, avec case « se souvenir de moi ».
+- Rôles `admin` et `author` : Gates `manage-categories` / `manage-tags`, `PostPolicy`, middleware `admin` et `Gate::before` dans `AppServiceProvider`.
+- Défis conservés : `/mes-articles`, `/admin/utilisateurs` (changement de rôle ; un administrateur ne peut pas modifier son propre rôle).
+- API JSON : lecture de `/api/posts`, `/api/categories`, `/api/tags` et de leurs pages détaillées ; filtres `?category=`, `?tag=`, `?per_page=` ; écritures protégées par jetons Sanctum et la même `PostPolicy` que le site.
+- Défis S13/S14 conservés : `tags` dans les réponses, `body` uniquement sur la page d'un article, collection `docs/postman/mini-cms.postman_collection.json` et notes `notes/s13-defi.md` / `notes/s14-defi.md`.
+- `Model::preventLazyLoading(! app()->isProduction())` en développement ; chargements explicites avec `with()` / `withCount()` ; Resources `PostResource`, `CategoryResource`, `TagResource`.
+- Pages d'erreur 404 et 503 dans le layout ; messages de validation traduits en français.
+- Suite Pest verte : 97 tests / 300 assertions.
 
 ## Installation
 
-### Bash (Git Bash, macOS, Linux)
+### Bash
 
 ```bash
 git clone https://github.com/bayrem-db/mini-cms.git
 cd mini-cms
 composer install
 npm install
+npm run build
 cp .env.example .env
-php artisan key:generate
 touch database/database.sqlite
-php artisan migrate
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan test
 composer run dev
 ```
 
-### PowerShell (Windows)
+### PowerShell
 
 ```powershell
 git clone https://github.com/bayrem-db/mini-cms.git
 cd mini-cms
 composer install
 npm install
+npm run build
 copy .env.example .env
+if (-not (Test-Path database\database.sqlite)) { New-Item database\database.sqlite -ItemType File }
 php artisan key:generate
-New-Item database\database.sqlite -ItemType File
-php artisan migrate
+php artisan migrate:fresh --seed
+php artisan test
 composer run dev
 ```
 
-Ouvrir ensuite http://localhost:8000 (adresse de l'application, différente de l'adresse de Vite sur le port 5173).
+`npm run build` est indispensable : le layout charge ses fichiers avec `@vite`, et les tests qui affichent une page échouent sur un clone qui n'a jamais été construit. Ouvrir ensuite http://localhost:8000 (adresse de l'application, différente de celle de Vite). Si Artisan demande de créer `database/database.sqlite`, répondre `yes`.
+
+## Comptes de test
+
+Après `php artisan migrate:fresh --seed` :
+
+- Administrateur : `test@example.com` / `password` (rôle `admin`).
+- Deux auteurs créés par `UserFactory`, avec le mot de passe `password` et le rôle `author`. Leurs adresses étant aléatoires, les afficher avec :
+  `php artisan tinker --execute="echo App\Models\User::all()->pluck('email')->implode(PHP_EOL);"`
+- Les jetons API s'obtiennent avec `POST /api/login` ; aucun jeton réel n'est conservé dans ce dépôt.
+
+## API
+
+### Endpoints
+
+| Méthode | URI | Accès | Remarque |
+|---|---|---|---|
+| GET | `/api/posts` | public | articles publiés, paginés (`?per_page=` 1–50, défaut 5), filtres `?category=<slug>` et `?tag=<slug>` |
+| GET | `/api/posts/{post}` | public | `body` uniquement ici ; brouillon 403, inconnu 404 |
+| GET | `/api/categories` | public | `posts_count` (articles publiés) |
+| GET | `/api/categories/{category}` | public | `posts_count` |
+| GET | `/api/tags` | public | `posts_count` (articles publiés) |
+| GET | `/api/tags/{tag}` | public | 404 JSON si inconnu |
+| POST | `/api/login` | public | renvoie un jeton Sanctum (`plainTextToken`) |
+| POST | `/api/logout` | `auth:sanctum` | révoque le jeton courant, 204 |
+| POST | `/api/posts` | `auth:sanctum` | 201, mêmes Form Requests et `PostPolicy` que le site |
+| PUT/PATCH | `/api/posts/{post}` | `auth:sanctum` + Policy | 401, 403, 404, 422 |
+| DELETE | `/api/posts/{post}` | `auth:sanctum` + Policy | 204, 401, 403, 404 |
+
+Les réponses de liste ont une clé `data` ; les listes paginées ajoutent `links` et `meta`. Les dates sont en ISO 8601 ; ni e-mail ni rôle des auteurs ne sont exposés. Un slug inconnu dans un filtre est refusé avec un message en français (422).
+
+### Authentification par jeton
+
+Le groupe de routes `api` n'utilise ni session ni cookie : chaque requête protégée présente le jeton dans l'en-tête `Authorization: Bearer <jeton>`.
+
+```bash
+curl.exe -X POST -H "Accept: application/json" -H "Content-Type: application/json" -d "{\"email\":\"test@example.com\",\"password\":\"password\"}" http://localhost:8000/api/login
+```
+
+```json
+{"token":"VOTRE_JETON","token_type":"Bearer"}
+```
+
+`VOTRE_JETON` est un placeholder, jamais un jeton réel. Le jeton brut n'est affiché qu'une fois ; seul son empreinte SHA-256 est stockée dans `personal_access_tokens`. Par défaut, il n'expire pas : révoquez-le avec `/api/logout` quand vous avez terminé.
+
+### Codes d'erreur
+
+- `401` : jeton absent, invalide ou révoqué (`auth:sanctum`).
+- `403` : action refusée par `PostPolicy` (article d'un autre auteur, brouillon sur `show`).
+- `404` : ressource inconnue, en JSON avec une clé `message`.
+- `422` : validation (par exemple `per_page` hors de 1–50 ou slug inconnu), messages en français.
+
+### Exemple curl.exe
+
+```bash
+curl.exe -X POST -H "Accept: application/json" -H "Authorization: Bearer VOTRE_JETON" http://localhost:8000/api/logout
+```
+
+La réponse 204 n'a pas de corps : la commande n'affiche rien quand le jeton est valide.
 
 ## Captures d'écran
 
@@ -206,7 +215,86 @@ Captures réalisées avec le navigateur et `curl.exe` (repli prévu par le codel
 
 Ces deux captures utilisent le même repli : réponses API réelles, annotées avec l'URL, l'onglet Body et le code HTTP. Aucun jeton n'apparaît dans les images ni dans la collection exportée.
 
-## Comparaison avec le starter kit Livewire
+## Choix d'architecture
+
+### Pourquoi les écritures de l'API passent par PostPolicy
+
+Je n'ai écrit qu'une seule règle pour décider qui peut modifier ou supprimer un article. Le site web et l'API l'appellent tous les deux. Si je change cette règle, les deux portes changent ensemble : l'API ne peut pas devenir un raccourci qui contourne les droits du site. La Form Request vérifie les données avant le contrôleur ; pour une modification, c'est son `authorize()` qui consulte la Policy, afin qu'un utilisateur non autorisé reçoive 403 et non 422. `destroy`, qui n'a pas de Form Request, commence par `Gate::authorize`.
+
+### Pourquoi preventLazyLoading est activé
+
+Quand une relation est lue dans une boucle sans avoir été chargée, Laravel fait une requête supplémentaire par élément : c'est le problème N+1. En développement, `Model::preventLazyLoading(! app()->isProduction())` transforme ce défaut silencieux en erreur visible. C'est pour cela que les contrôleurs chargent explicitement `with()` et comptent avec `withCount()`. L'option reste désactivée en production pour ne pas casser le site pour une relation oubliée.
+
+### Pourquoi l'API utilise des jetons et non la session
+
+Le groupe de routes `api` n'a ni session ni cookie. Ses clients ne sont pas forcément des navigateurs : Postman, `curl.exe`, un script ou une application mobile. Chaque requête protégée présente donc un jeton dans `Authorization: Bearer`. Ce jeton se révoque seul avec `/api/logout`, sans déconnecter les autres appareils, et les droits restent ceux de `PostPolicy`, identiques à ceux du site.
+
+## Annexes conservées
+
+### État actuel (tag lab-08b)
+
+- `GET /api/posts`, `GET /api/categories`, `GET /api/tags` et leurs pages détaillées, en JSON.
+- Filtres exacts par slug : `?category=<slug>`, `?tag=<slug>` ; `?per_page=` de 1 à 50, avec validation en français.
+- `POST /api/login` renvoie un jeton Sanctum ; `POST /api/logout` le révoque.
+- `POST`, `PUT/PATCH` et `DELETE /api/posts` protégés par `auth:sanctum`, avec les mêmes Form Requests et la même `PostPolicy` que le site (401, 403, 422).
+- Tests Pest `ApiReadTest`, `ApiWriteTest` et `TagApiTest` : 97 tests verts.
+- Authentification manuelle, Gates, middleware `admin`, `Gate::before`, défis `/mes-articles`, `/admin/utilisateurs` et collection Postman conservés.
+
+### Données de démonstration
+
+Après un clone, reconstruire la base avec `php artisan migrate:fresh --seed`. Attention : cette commande vide la base avant de la remplir.
+
+### Routes disponibles
+
+| Méthode | URI | Nom | Action |
+|---|---|---|---|
+| GET | `/` | `home` | `PageController@home` |
+| GET | `/a-propos` | `about` | `PageController@about` |
+| GET | `/heure` | `time` | `PageController@time` |
+| GET | `/posts` | `posts.index` | `PostController@index` |
+| GET | `/posts/archive/{year}` | `posts.archive` | `PostController@archive` |
+| GET | `/posts/categorie/{category:slug}` | `posts.category` | `PostController@byCategory` |
+| GET | `/posts/tag/{tag:slug}` | `posts.tag` | `PostController@byTag` |
+| GET | `/posts/create` | `posts.create` | `PostController@create` |
+| POST | `/posts` | `posts.store` | `PostController@store` |
+| GET | `/posts/{post}` | `posts.show` | `PostController@show` |
+| GET | `/posts/{post}/edit` | `posts.edit` | `PostController@edit` |
+| PUT | `/posts/{post}` | `posts.update` | `PostController@update` |
+| DELETE | `/posts/{post}` | `posts.destroy` | `PostController@destroy` |
+| PATCH | `/posts/{post}/publication` | `posts.publication` | `PostController@togglePublication` |
+| GET | `/admin/categories` | `admin.categories.index` | `CategoryController@index` |
+| GET | `/admin/categories/create` | `admin.categories.create` | `CategoryController@create` |
+| POST | `/admin/categories` | `admin.categories.store` | `CategoryController@store` |
+| GET | `/admin/categories/{category}/edit` | `admin.categories.edit` | `CategoryController@edit` |
+| PUT | `/admin/categories/{category}` | `admin.categories.update` | `CategoryController@update` |
+| DELETE | `/admin/categories/{category}` | `admin.categories.destroy` | `CategoryController@destroy` |
+| GET | `/admin/tags` | `admin.tags.index` | `TagController@index` |
+| GET | `/admin/tags/create` | `admin.tags.create` | `TagController@create` |
+| POST | `/admin/tags` | `admin.tags.store` | `TagController@store` |
+| GET | `/admin/tags/{tag}/edit` | `admin.tags.edit` | `TagController@edit` |
+| PUT | `/admin/tags/{tag}` | `admin.tags.update` | `TagController@update` |
+| DELETE | `/admin/tags/{tag}` | `admin.tags.destroy` | `TagController@destroy` |
+| GET | `/inscription` | `register` | `Auth\RegisterController@create` |
+| POST | `/inscription` | `register.store` | `Auth\RegisterController@store` |
+| GET | `/connexion` | `login` | `Auth\LoginController@create` |
+| POST | `/connexion` | `login.store` | `Auth\LoginController@store` |
+| POST | `/deconnexion` | `logout` | `Auth\LoginController@destroy` |
+| GET | `/mes-articles` | `my-posts` | `PostController@myPosts` |
+| GET | `/admin/utilisateurs` | `admin.users.index` | `UserController@index` |
+| PATCH | `/admin/utilisateurs/{user}/role` | `admin.users.role` | `UserController@updateRole` |
+| GET | `/api/posts` | `api.posts.index` | `Api\PostController@index` |
+| GET | `/api/posts/{post}` | `api.posts.show` | `Api\PostController@show` |
+| GET | `/api/categories` | `api.categories.index` | `Api\CategoryController@index` |
+| GET | `/api/categories/{category}` | `api.categories.show` | `Api\CategoryController@show` |
+| GET | `/api/tags` | `api.tags.index` | `Api\TagController@index` |
+| GET | `/api/tags/{tag}` | `api.tags.show` | `Api\TagController@show` |
+| POST | `/api/login` | `api.login` | `Api\AuthController@login` |
+| POST | `/api/logout` | `api.logout` | `Api\AuthController@logout` |
+| POST | `/api/posts` | `api.posts.store` | `Api\PostController@store` |
+| PUT/PATCH | `/api/posts/{post}` | `api.posts.update` | `Api\PostController@update` |
+| DELETE | `/api/posts/{post}` | `api.posts.destroy` | `Api\PostController@destroy` |
+
+### Comparaison avec le starter kit Livewire
 
 | Critère | Mini-CMS (authentification manuelle) | Starter kit Livewire |
 |---|---|---|
