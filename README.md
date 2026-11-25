@@ -6,17 +6,14 @@ Auteur : Bayrem, groupe MDW32.
 
 Mini-CMS évoluera au fil du semestre vers une petite plateforme de publication : pages publiques, back-office authentifié, API JSON et tests Pest. Chaque session se termine par un tag Git (`lab-01`, `lab-01b`, puis un tag par session).
 
-## État actuel (tag lab-06b)
+## État actuel (tag lab-07)
 
-- Middleware `admin` (`App\Http\Middleware\EnsureUserIsAdmin`) sur tout `/admin` : un auteur reçoit 403 « Réservé aux administrateurs. ».
-- Gate `manage-tags`, comme `manage-categories` : contrôleur, Form Requests et menu.
-- Brouillons protégés : `PostPolicy::view` et le scope `visibleTo` ; un brouillon n'est visible que par son auteur et les administrateurs.
-- Tests d'autorisation : `AdminAccessTest` (7 tests) et `PostVisibilityTest` (5 tests), en plus des fichiers de la session 11.
-- Comparaison écrite avec le starter kit Livewire (section ci-dessous).
-- Défi session 12 conservé : `/admin/utilisateurs`, `UserPolicy::changeRole` et un `Gate::before` qui accorde les droits aux administrateurs sauf la modification de leur propre rôle.
-- Défi session 11 conservé : `/mes-articles` (`PostController@myPosts`) et case « Se souvenir de moi » (`Auth\LoginController@store`, second argument de `Auth::attempt`).
-- Comptes écrits à la main et colonne `role` (`author` par défaut, `admin`) ; après `php artisan migrate:fresh --seed`, `test@example.com` / `password` est administrateur.
-- Tests Pest (81) : `PostPagesTest`, `PostWriteTest`, `PostRelationsTest`, `PostTaxonomyTest`, `PostFeedbackTest`, `CategoryAdminTest`, `ErrorPagesTest`, `AuthTest`, `AuthorizationTest`, `AdminAccessTest`, `PostVisibilityTest` et `UserRoleTest`.
+- API JSON en lecture seule, installée avec `php artisan install:api` (Sanctum installé ; les jetons arrivent en session 14).
+- `GET /api/posts` : articles publiés, paginés (`?per_page=` de 1 à 50, 5 par défaut), avec auteur, catégorie et tags.
+- `GET /api/posts/{post}` : un article publié, avec son `body` ; un brouillon renvoie 403 et un numéro inconnu 404, en JSON.
+- Réponses mises en forme par `PostResource` et `CategoryResource` : ni e-mail ni rôle des auteurs, dates ISO 8601 ; le `body` n'est envoyé que sur la page d'un article (défi session 13).
+- Testée avec Postman et `curl.exe -H "Accept: application/json"` (captures ci-dessous).
+- Fonctionnalités des sessions précédentes conservées : authentification manuelle, Gates et `PostPolicy`, middleware `admin`, défis `/mes-articles` et `/admin/utilisateurs`. 81 tests Pest verts.
 
 ## Données de démonstration
 
@@ -60,6 +57,8 @@ Après un clone, reconstruire la base avec `php artisan migrate:fresh --seed`. A
 | GET | `/mes-articles` | `my-posts` | `PostController@myPosts` |
 | GET | `/admin/utilisateurs` | `admin.users.index` | `UserController@index` |
 | PATCH | `/admin/utilisateurs/{user}/role` | `admin.users.role` | `UserController@updateRole` |
+| GET | `/api/posts` | `api.posts.index` | `Api\PostController@index` |
+| GET | `/api/posts/{post}` | `api.posts.show` | `Api\PostController@show` |
 
 ## Prérequis
 
@@ -181,6 +180,14 @@ Back-office des catégories et des tags, messages de validation en français, pa
 ![Page 403 « Réservé aux administrateurs. » pour un compte auteur sur /admin/tags](screenshots/s12-admin-interdit.png)
 
 ![Barre de navigation d'un compte auteur, sans les liens Catégories et Tags](screenshots/s12-menu-auteur.png)
+
+### Session 13
+
+![Postman : réponse JSON de GET /api/posts?per_page=2, avec data, links et meta](screenshots/s13-postman-liste.png)
+
+![Postman : réponse 422 de GET /api/posts?per_page=500, avec le message en français](screenshots/s13-postman-422.png)
+
+Captures réalisées avec le navigateur et `curl.exe` (repli prévu par le codelab lorsque Postman n'est pas installé) : elles montrent les mêmes réponses API que Postman, annotées avec l'URL et le code HTTP.
 
 ## Comparaison avec le starter kit Livewire
 
